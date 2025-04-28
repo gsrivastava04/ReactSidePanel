@@ -23,9 +23,10 @@ interface Link {
 interface NodeGraphProps {
   nodes: Node[];
   links: Link[];
+  onNodeClick?: (node: Node) => void;
 }
 
-const NodeGraph: React.FC<NodeGraphProps> = ({ nodes, links }) => {
+const NodeGraph: React.FC<NodeGraphProps> = ({ nodes, links, onNodeClick }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
@@ -42,6 +43,9 @@ const NodeGraph: React.FC<NodeGraphProps> = ({ nodes, links }) => {
       .attr('width', width)
       .attr('height', height);
 
+    // Create a copy of nodes for the simulation
+    const simulationNodes = nodes.map(node => ({ ...node }));
+
     // Create simulation
     const simulation = d3.forceSimulation<Node>()
       .force('link', d3.forceLink<Node, Link>()
@@ -56,27 +60,31 @@ const NodeGraph: React.FC<NodeGraphProps> = ({ nodes, links }) => {
       .data(links)
       .enter()
       .append('line')
-      .attr('stroke', '#999')
+      .attr('stroke', '#BA0C2F')
       .attr('stroke-opacity', 0.6)
       .attr('stroke-width', 2);
 
     // Create nodes
     const node = svg.append('g')
       .selectAll('circle')
-      .data(nodes)
+      .data(simulationNodes)
       .enter()
       .append('circle')
       .attr('r', 10)
-      .attr('fill', '#69b3a2')
+      .attr('fill', '#BA0C2F')
       .call(d3.drag<SVGCircleElement, Node>()
         .on('start', dragstarted)
         .on('drag', dragged)
         .on('end', dragended));
 
+    if (onNodeClick) {
+      node.on('click', (event, d) => onNodeClick(d));
+    }
+
     // Add labels
     const label = svg.append('g')
       .selectAll('text')
-      .data(nodes)
+      .data(simulationNodes)
       .enter()
       .append('text')
       .text(d => d.name)
@@ -85,7 +93,7 @@ const NodeGraph: React.FC<NodeGraphProps> = ({ nodes, links }) => {
       .attr('dy', 4);
 
     // Update positions
-    simulation.nodes(nodes).on('tick', () => {
+    simulation.nodes(simulationNodes).on('tick', () => {
       link
         .attr('x1', d => (d.source as any).x)
         .attr('y1', d => (d.source as any).y)
@@ -123,7 +131,7 @@ const NodeGraph: React.FC<NodeGraphProps> = ({ nodes, links }) => {
     return () => {
       simulation.stop();
     };
-  }, [nodes, links]);
+  }, [nodes, links, onNodeClick]);
 
   return (
     <GraphContainer>

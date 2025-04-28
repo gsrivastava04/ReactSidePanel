@@ -1,0 +1,75 @@
+.filter-container {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-title {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 20px;
+  font-size: 1.25rem;
+}
+
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.checkbox {
+  color: #BA0C2F;
+}
+
+.checkbox.Mui-checked {
+  color: #BA0C2F;
+}
+
+.divider {
+  margin: 8px 0;
+  background-color: #e0e0e0;
+}
+
+.form-control {
+  margin-bottom: 16px;
+}
+
+.form-control .MuiInputLabel-root {
+  color: #666;
+}
+
+.form-control .MuiOutlinedInput-root {
+  border-radius: 4px;
+}
+
+.form-control .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #BA0C2F;
+}
+
+.form-control .Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #BA0C2F;
+}
+
+.form-control .MuiInputLabel-root.Mui-focused {
+  color: #BA0C2F;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.clear-button {
+  text-transform: none;
+  font-weight: 500;
+  padding: 8px 24px;
+  border-color: #BA0C2F;
+  color: #BA0C2F;
+}
+
+.clear-button:hover {
+  background-color: rgba(186, 12, 47, 0.04);
+  border-color: #BA0C2F;
+} 
