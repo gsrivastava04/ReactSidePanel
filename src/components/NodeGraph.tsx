@@ -1,12 +1,31 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { styled } from '@mui/material/styles';
+import GanttChartThemeWrapper from './GanttChart/GanttChartThemeWrapper';
 
 const GraphContainer = styled('div')({
   width: '100%',
   height: 'calc(100vh - 64px)', // Subtract header height
   backgroundColor: '#f5f5f5',
 });
+
+const AddNodeButton = styled('button')(({ theme }) => ({
+  margin: theme.spacing(2),
+  padding: theme.spacing(1, 2),
+  background: theme.palette.background.paper,
+  color: theme.palette.primary.main,
+  border: `1px solid ${theme.palette.primary.main}`,
+  borderRadius: theme.shape.borderRadius,
+  cursor: 'pointer',
+  fontWeight: 500,
+  fontSize: '1rem',
+  transition: 'background 0.2s',
+  '&:hover': {
+    background: theme.palette.action.hover,
+    borderColor: theme.palette.primary.dark,
+    color: theme.palette.primary.dark,
+  },
+}));
 
 interface Node {
   id: string;
@@ -28,6 +47,7 @@ interface NodeGraphProps {
 
 const NodeGraph: React.FC<NodeGraphProps> = ({ nodes, links, onNodeClick }) => {
   const svgRef = useRef<SVGSVGElement>(null);
+  const [showGantt, setShowGantt] = useState(false);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -135,9 +155,15 @@ const NodeGraph: React.FC<NodeGraphProps> = ({ nodes, links, onNodeClick }) => {
 
   return (
     <GraphContainer>
+      <AddNodeButton onClick={() => setShowGantt(true)}>
+        Add Node
+      </AddNodeButton>
       <svg ref={svgRef} />
+      {showGantt && (
+        <GanttChartThemeWrapper isOpen={showGantt} onClose={() => setShowGantt(false)} />
+      )}
     </GraphContainer>
   );
 };
 
-export default NodeGraph; 
+export default NodeGraph;
