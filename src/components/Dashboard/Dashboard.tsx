@@ -9,7 +9,7 @@ import { Node } from '../../types';
 const Dashboard: React.FC = () => {
   const [panelOpen, setPanelOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const { nodes, links } = useSelector((state: RootState) => state.app);
+  const { nodes, links, selectedApplication } = useSelector((state: RootState) => state.app);
 
   const handleMenuClick = () => {
     setPanelOpen(prev => !prev);
@@ -28,7 +28,7 @@ const Dashboard: React.FC = () => {
     <div className="dashboard">
       <Header 
         onMenuClick={handleMenuClick} 
-        companyName="Node Graph Visualization"
+        companyName={selectedApplication || "Node Graph Visualization"}
         logoUrl="/logo.png"
       />
       <NodeGraph 

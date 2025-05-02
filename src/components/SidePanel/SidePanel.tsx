@@ -49,14 +49,37 @@ const SidePanel: React.FC<SidePanelProps> = ({ open, onClose }) => {
           value={value} 
           onChange={handleChange} 
           aria-label="panel tabs"
-          variant="scrollable"
-          scrollButtons="auto"
+          variant="fullWidth"
+          sx={(theme) => ({
+            minHeight: 48,
+            background: theme.palette.background.paper,
+            boxShadow: theme.shadows[1],
+            '& .MuiTab-root': {
+              minWidth: 0,
+              flex: 1,
+              fontFamily: theme.typography.fontFamily,
+              fontWeight: theme.typography.fontWeightMedium,
+              fontSize: '1rem',
+              color: theme.palette.text.secondary,
+              transition: 'color 0.2s',
+            },
+            '& .Mui-selected': {
+              color: theme.palette.primary.main,
+              fontWeight: theme.typography.fontWeightBold,
+              background: theme.palette.action.selected,
+              borderRadius: theme.shape.borderRadius,
+            },
+            '& .MuiTabs-indicator': {
+              backgroundColor: theme.palette.primary.main,
+              height: 3,
+              borderRadius: 2,
+            }
+          })}
         >
           <Tab label="Filters" />
           <Tab label="Details" />
           <Tab label="Trend" />
           <Tab label="SLA" />
-          <Tab label="Search" />
         </Tabs>
       </Box>
       <Box className="content-container">
@@ -71,9 +94,6 @@ const SidePanel: React.FC<SidePanelProps> = ({ open, onClose }) => {
         </TabPanel>
         <TabPanel value={value} index={3}>
           <Typography variant="body1">SLA content coming soon</Typography>
-        </TabPanel>
-        <TabPanel value={value} index={4}>
-          <Typography variant="body1">Search content coming soon</Typography>
         </TabPanel>
       </Box>
     </Drawer>

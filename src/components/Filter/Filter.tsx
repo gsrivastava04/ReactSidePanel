@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   Box, 
-  Typography, 
   FormControl, 
   InputLabel, 
   Select, 
@@ -9,7 +8,9 @@ import {
   Checkbox, 
   FormControlLabel,
   Button,
-  Divider
+  Divider,
+  TextField,
+  SelectChangeEvent
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
@@ -19,10 +20,17 @@ import './Filter.css';
 const Filter: React.FC = () => {
   const dispatch = useDispatch();
   const selectedApplication = useSelector((state: RootState) => state.app.selectedApplication);
-  const [showBox, setShowBox] = useState(false);
+
+  const [showBox, setShowBox] = useState(false); // (Legacy state, not used for Enable Updates)
   const [jobStatus, setJobStatus] = useState('');
   const [runInterval, setRunInterval] = useState('');
   const [type, setType] = useState('');
+  const [component, setComponent] = useState('');
+  const [search, setSearch] = useState('');
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
 
   const jobStatuses = [
     'Running',
@@ -55,17 +63,43 @@ const Filter: React.FC = () => {
     setType('');
   };
 
-  const handleApplicationChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleApplicationChange = (event: SelectChangeEvent<string>) => {
     dispatch(setSelectedApplication(event.target.value));
   };
 
   return (
     <Box className="filter-container">
-      <Typography variant="h6" className="filter-title">
-        Filters
-      </Typography>
-      
-      <Box className="filter-content">
+{selectedApplication && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={false}
+                sx={{
+                  color: '#BA0C2F',
+                  '&.Mui-checked': {
+                    color: '#BA0C2F',
+                  },
+                }}
+              />
+            }
+            label={<span style={{ fontWeight: 500, color: '#BA0C2F', fontSize: '1rem' }}>Enable Updates</span>}
+          />
+        </Box>
+      )}
+      <Box className="filter-content" style={{ marginTop: 0 }}>
+        <Box sx={{ mb: 1 }}>
+          <TextField
+            id="search-input"
+            label="Search"
+            value={search}
+            onChange={handleSearchChange}
+            variant="outlined"
+            fullWidth
+            sx={(theme) => ({ backgroundColor: theme.palette.background.paper, fontFamily: theme.typography.fontFamily, fontSize: '1rem', display: 'none' })}
+          />
+        </Box>
+
         <FormControlLabel
           control={
             <Checkbox 
@@ -131,6 +165,20 @@ const Filter: React.FC = () => {
             {types.map((t) => (
               <MenuItem key={t} value={t}>{t}</MenuItem>
             ))}
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth className="form-control">
+          <InputLabel>Component</InputLabel>
+          <Select
+            value={component}
+            onChange={(e) => setComponent(e.target.value)}
+            label="Component"
+          >
+            <MenuItem value="">Select Component</MenuItem>
+            <MenuItem value="Component A">Component A</MenuItem>
+            <MenuItem value="Component B">Component B</MenuItem>
+            <MenuItem value="Component C">Component C</MenuItem>
           </Select>
         </FormControl>
 
