@@ -82,13 +82,10 @@ interface SortableTableProps {
   filter: string;
 }
 
-export const SortableTable: React.FC<SortableTableProps> = ({ filter }) => {
+export default function SortableTable({ filter }: SortableTableProps) {
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<SortableColumn>('appId');
   const [rows] = useState<DataRow[]>(initialRows);
-  const [showAll, setShowAll] = useState(false);
-  // Filter is now controlled by parent
-
   const handleSort = (property: SortableColumn) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -99,13 +96,10 @@ export const SortableTable: React.FC<SortableTableProps> = ({ filter }) => {
     row.appId.toLowerCase().includes(filter.toLowerCase())
   );
 
-  const visibleRows = showAll ? filteredRows : filteredRows.slice(0, 7);
-
   return (
-    <>
-      <TableContainer>
-        <Table size="small">
-          <TableHead>
+    <TableContainer>
+      <Table size="small">
+        <TableHead>
           <TableRow>
             <TableCell>
               <TableSortLabel
@@ -155,7 +149,7 @@ export const SortableTable: React.FC<SortableTableProps> = ({ filter }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {visibleRows.slice().sort(getComparator(order, orderBy)).map((row, i) => (
+          {filteredRows.slice().sort(getComparator(order, orderBy)).map((row, i) => (
             <TableRow key={i}>
               <TableCell>{row.appId}</TableCell>
               <TableCell>{row.scheduler}</TableCell>
@@ -173,20 +167,5 @@ export const SortableTable: React.FC<SortableTableProps> = ({ filter }) => {
         </TableBody>
       </Table>
     </TableContainer>
-      {filteredRows.length > 7 && !showAll && (
-        <Box sx={{ textAlign: 'center', mt: 1 }}>
-          <Button variant="outlined" size="small" onClick={() => setShowAll(true)}>
-            Show More
-          </Button>
-        </Box>
-      )}
-      {filteredRows.length > 7 && showAll && (
-        <Box sx={{ textAlign: 'center', mt: 1 }}>
-          <Button variant="outlined" size="small" onClick={() => setShowAll(false)}>
-            Show Less
-          </Button>
-        </Box>
-      )}
-    </>
   );
 }

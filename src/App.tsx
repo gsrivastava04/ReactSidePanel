@@ -3,9 +3,9 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
-import Dashboard from './components/Dashboard/Dashboard';
-import Onboarding from './Onboarding';
-import Login from './Login';
+import Dashboard from './components/dashboard/dashboard';
+import Onboarding from './onboarding/onboarding';
+import Login from './components/login/login';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 const RequireAuth = ({ children }: { children: JSX.Element }) => {
@@ -14,7 +14,7 @@ const RequireAuth = ({ children }: { children: JSX.Element }) => {
 };
 
 import { theme } from './theme/theme';
-import SessionTimeoutDialog from './components/SessionTimeoutDialog';
+import SessionTimeoutDialog from './components/login/sessionTimeoutDialog';
 
 const SESSION_TIMEOUT = 10 * 60; // 10 min in seconds
 const WARNING_TIME = 2 * 60; // 2 min in seconds

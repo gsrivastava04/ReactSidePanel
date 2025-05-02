@@ -14,11 +14,15 @@ import {
   TableRow,
   TextField,
   Input,
+  Checkbox,
+  Snackbar,
+  Alert,
   useTheme
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { SortableTable } from './SortableTable';
+import SortableTable from './sortableTable';
 import MenuItem from '@mui/material/MenuItem';
+import MermaidRenderer from './mermaidRenderer';
 
 const mockTableData = [
   { appId: 'TBCS', scheduler: 'PB1', jobId: 4584, status: 'completed', csv: 'Download' },
@@ -30,9 +34,12 @@ const mockTableData = [
 
 const Onboarding: React.FC = () => {
   const theme = useTheme();
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(1); // Default to workflow tab
   const [file, setFile] = useState<File | null>(null);
   const [filter, setFilter] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   return (
     <Box sx={{ minHeight: '100vh', background: theme.palette.background.default, p: { xs: 1, md: 3 } }}>
@@ -99,32 +106,69 @@ const Onboarding: React.FC = () => {
                     size="small"
                     fullWidth
                   />
-                  <Button variant="contained" color="primary" sx={{ mt: 1, alignSelf: 'flex-start', minWidth: 120 }}>
-                    Submit
-                  </Button>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                    <Checkbox 
+                      checked={rememberMe}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRememberMe(e.target.checked)}
+                      size="small"
+                    />
+                    <Typography variant="body2">Remember Me</Typography>
+                    <Button 
+                      variant="contained" 
+                      color="primary" 
+                      sx={{ ml: 2, alignSelf: 'flex-start', minWidth: 120 }}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
                 </Box>
               )}
               {tab === 1 && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    component="label"
-                    startIcon={<CloudUploadIcon />}
-                    sx={{ borderRadius: 2 }}
-                  >
-                    Choose File
-                    <Input
-                      type="file"
-                      sx={{ display: 'none' }}
-                      onChange={e => {
-                        const target = e.target as HTMLInputElement;
-                        setFile(target.files && target.files[0] ? target.files[0] : null);
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2, width: '100%', maxWidth: 400 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+                    <Button
+                      variant="contained"
+                      component="label"
+                      startIcon={<CloudUploadIcon />}
+                      sx={{ borderRadius: 2, flexShrink: 0 }}
+                    >
+                      Choose File
+                      <input
+                        type="file"
+                        hidden
+                        onChange={e => {
+                          const target = e.target as HTMLInputElement;
+                          setFile(target.files && target.files[0] ? target.files[0] : null);
+                        }}
+                      />
+                    </Button>
+                    <Typography variant="body2" sx={{ flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {file ? file.name : 'No file chosen'}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      disabled={!file}
+                      sx={{ width: '50%' }}
+                      onClick={() => {
+                        // Simulated upload logic
+                        setIsUploading(true);
+                        setTimeout(() => {
+                          setIsUploading(false);
+                          setUploadSuccess(true);
+                          // Reset file after 3 seconds
+                          setTimeout(() => {
+                            setFile(null);
+                            setUploadSuccess(false);
+                          }, 3000);
+                        }, 1500);
                       }}
-                    />
-                  </Button>
-                  <Typography variant="body2">
-                    {file ? file.name : 'No file chosen'}
-                  </Typography>
+                    >
+                      {isUploading ? 'Uploading...' : 'Upload'}
+                    </Button>
+                  </Box>
                 </Box>
               )}
             </Paper>
@@ -166,18 +210,60 @@ const Onboarding: React.FC = () => {
         </ol>
       </Paper>
 
-      {/* Onboarding Workflow (Mermaid placeholder) */}
+      {/* Onboarding Workflow (Mermaid) */}
       <Paper sx={{ p: 2, borderRadius: 2, mb: 3, textAlign: 'center' }}>
         <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
           Onboarding Workflow
         </Typography>
-        {/* Mermaid diagram placeholder - to be implemented */}
         <Box sx={{ minHeight: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', borderRadius: 1 }}>
-          <Typography variant="body2" color="textSecondary">
-            [Workflow diagram will appear here]
-          </Typography>
+          <MermaidRenderer 
+  chart={`
+graph LR
+    A[Start] --> B[/1. Fill Form/]
+    B --> C[/2. Submit/]
+    C --> D{3. Request Status Accepted?}
+    D -->|Yes| E([Generate Basic Graph])
+    D -->|No| F([Show Error])
+    E --> G[/4. Download CSV/]
+    F --> I([Redo])
+    G --> H[/5. Upload CSV with Full Metadata/]
+    H --> I([Generate full fledged graph])
+    
+    classDef start fill:#27ae60,stroke:#2ecc71,color:white
+    classDef form fill:#3498db,stroke:#2980b9,color:white
+    classDef decision fill:#f39c12,stroke:#d35400,color:white
+    classDef success fill:#2ecc71,stroke:#27ae60,color:white
+    classDef error fill:#e74c3c,stroke:#c0392b,color:white
+    classDef download fill:#9b59b6,stroke:#8e44ad,color:white
+    
+    class A start
+    class B form
+    class C form
+    class D decision
+    class E success
+    class F error
+    class G download
+    class H download
+    class I success
+`}
+
+/>
         </Box>
       </Paper>
+      <Snackbar
+        open={uploadSuccess}
+        autoHideDuration={3000}
+        onClose={() => setUploadSuccess(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setUploadSuccess(false)} 
+          severity="success" 
+          sx={{ width: '100%' }}
+        >
+          File uploaded successfully!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

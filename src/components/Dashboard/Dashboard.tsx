@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import Header from '../Header';
-import NodeGraph from '../NodeGraph';
-import SidePanel from '../SidePanel/SidePanel';
+import Header from '../header/header';
+import NodeGraph from '../nodeGraph';
+import SidePanel from '../sidePanel/sidePanel';
 import { Node } from '../../types';
 
 const Dashboard: React.FC = () => {
